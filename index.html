@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>生日快乐！</title>
     <style>
         body {
@@ -17,13 +18,24 @@
         .container {
             text-align: center;
             z-index: 1;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 85%;
         }
-        h1 { color: #ff69b4; margin-bottom: 10px; }
-        p { color: #555; line-height: 1.6; }
+        /* 新增：照片头像样式 */
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%; /* 圆形 */
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            object-fit: cover; /* 保证照片不拉伸 */
+            margin-bottom: 20px;
+        }
+        h1 { color: #ff69b4; margin-bottom: 10px; font-size: 1.5rem; }
+        p { color: #555; line-height: 1.8; margin: 10px 0; }
         .age { font-size: 24px; font-weight: bold; color: #ff1493; }
         canvas { position: absolute; top: 0; left: 0; }
     </style>
@@ -31,8 +43,10 @@
 <body>
     <canvas id="canvas"></canvas>
     <div class="container">
-        <h1>Happy Birthday! 🎂</h1>
-        <p>致我最亲爱的朋友：</p>
+        <img src="photo.jpg" alt="路鹏飞" class="avatar">
+        
+        <h1>Joyeux Anniversaire! 🎂</h1>
+        <p>致亲爱的路鹏飞同学：</p>
         <p>步入 <span class="age">36</span> 岁，</p>
         <p>愿你依然眼中有光，心中有爱。</p>
         <p>不被岁月抹去棱角，只被时光温柔以待。</p>
@@ -40,7 +54,6 @@
     </div>
 
     <script>
-        // 简单的粒子爱心背景效果
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -76,6 +89,11 @@
             requestAnimationFrame(animate);
         }
         animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
