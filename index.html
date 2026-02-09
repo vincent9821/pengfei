@@ -3,93 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生日快乐！</title>
+    <title>生日快乐，路鹏飞！</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background: #ffe4e1; /* 浪漫的浅粉色 */
+            background: #ffe4e1;
             font-family: 'Microsoft YaHei', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
+
+        /* 音乐控制按钮 */
+        #music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            cursor: pointer;
+            font-size: 30px;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
         .container {
             text-align: center;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 85%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 400px;
+            animation: fadeIn 2s ease;
         }
-        /* 新增：照片头像样式 */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* 圆形 */
-            border: 5px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            object-fit: cover; /* 保证照片不拉伸 */
-            margin-bottom: 20px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #ff69b4;
+            object-fit: cover;
+            margin-bottom: 15px;
+            transition: transform 0.5s;
         }
-        h1 { color: #ff69b4; margin-bottom: 10px; font-size: 1.5rem; }
-        p { color: #555; line-height: 1.8; margin: 10px 0; }
-        .age { font-size: 24px; font-weight: bold; color: #ff1493; }
-        canvas { position: absolute; top: 0; left: 0; }
+
+        .avatar:hover { transform: scale(1.1) rotate(5deg); }
+
+        h1 { color: #ff69b4; font-size: 1.8rem; margin: 10px 0; }
+        p { color: #555; line-height: 1.6; margin: 8px 0; }
+        .age { font-size: 28px; font-weight: bold; color: #ff1493; }
+        
+        /* 简易CSS蛋糕样式 */
+        .cake-icon {
+            font-size: 50px;
+            margin: 15px 0;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
     </style>
 </head>
 <body>
+
+    <div id="music-btn" onclick="toggleMusic()">🎵</div>
+    <audio id="bgm" loop>
+        <source src="https://m801.music.126.net/20240419143000/birthday_song.mp3" type="audio/mpeg">
+        </audio>
+
     <canvas id="canvas"></canvas>
+
     <div class="container">
         <img src="photo.jpg" alt="路鹏飞" class="avatar">
         
         <h1>Joyeux Anniversaire! 🎂</h1>
-        <p>致亲爱的路鹏飞同学：</p>
+        <p>致亲爱的 <strong>路鹏飞</strong> 同学：</p>
+        <span class="cake-icon">🎂</span>
         <p>步入 <span class="age">36</span> 岁，</p>
         <p>愿你依然眼中有光，心中有爱。</p>
         <p>不被岁月抹去棱角，只被时光温柔以待。</p>
-        <p><strong>生日快乐，永远保持少女心！</strong></p>
+        <p style="color: #ff69b4; font-weight: bold;">生日快乐，永远保持少女心！</p>
     </div>
 
     <script>
+        // 1. 音乐控制
+        const audio = document.getElementById('bgm');
+        const btn = document.getElementById('music-btn');
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = '⏸️';
+                btn.style.animation = "rotate 3s linear infinite";
+            } else {
+                audio.pause();
+                btn.innerText = '🎵';
+                btn.style.animation = "none";
+            }
+        }
+
+        // 2. 五彩纸屑特效
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const hearts = [];
-        function Heart() {
+        const particles = [];
+        const colors = ['#ff69b4', '#ff1493', '#ffd700', '#00f2ff', '#7cfc00'];
+
+        function Particle() {
             this.x = Math.random() * canvas.width;
-            this.y = canvas.height + Math.random() * 100;
-            this.size = Math.random() * 15 + 5;
-            this.speed = Math.random() * 2 + 1;
-            this.opacity = Math.random() * 0.5 + 0.3;
+            this.y = Math.random() * canvas.height - canvas.height;
+            this.size = Math.random() * 7 + 3;
+            this.speedX = Math.random() * 3 - 1.5;
+            this.speedY = Math.random() * 3 + 2;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.angle = Math.random() * 360;
         }
 
-        Heart.prototype.draw = function() {
-            ctx.fillStyle = `rgba(255, 105, 180, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
+        Particle.prototype.update = function() {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            this.angle += 1;
+            if (this.y > canvas.height) {
+                this.y = -20;
+                this.x = Math.random() * canvas.width;
+            }
         };
 
-        Heart.prototype.update = function() {
-            this.y -= this.speed;
-            if (this.y < -20) this.y = canvas.height + 20;
-            this.draw();
+        Particle.prototype.draw = function() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle * Math.PI / 180);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+            ctx.restore();
         };
 
-        for (let i = 0; i < 50; i++) hearts.push(new Heart());
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hearts.forEach(h => h.update());
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
             requestAnimationFrame(animate);
         }
         animate();
-        
+
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
